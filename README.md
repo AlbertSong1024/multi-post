@@ -28,7 +28,7 @@ pip install multi-post
 ### From source
 
 ```bash
-git clone https://github.com/Alex-2Code/multi-post.git
+git clone https://github.com/AlbertSong1024/multi-post.git
 cd multi-post
 pip install -e .
 ```
@@ -296,8 +296,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-- GitHub: [@Alex-2Code](https://github.com/Alex-2Code)
+- GitHub: [@AlbertSong1024](https://github.com/AlbertSong1024)
 
 ---
 
-Made with ❤️ by [Alex-2Code](https://github.com/Alex-2Code)
+Made with ❤️ by [AlbertSong1024](https://github.com/AlbertSong1024)
