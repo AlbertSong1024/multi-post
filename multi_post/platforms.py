@@ -381,3 +381,60 @@ PLATFORM_REGISTRY = {
     "segmentfault": SegmentFaultPlatform,
     "local": LocalFilePlatform,
 }
+
+
+class ZhihuPlatform(MarkdownPublisher):
+    """知乎平台发布器"""
+    
+    BASE_URL = "https://www.zhihu.com"
+    
+    def validate_config(self) -> bool:
+        """验证知乎配置"""
+        return bool(self.config.get("access_token"))
+    
+    def publish(self, article: Article) -> PublishResult:
+        """发布到知乎"""
+        if not self.validate_config():
+            return PublishResult(
+                platform="zhihu", success=False,
+                error="Missing access_token in config"
+            )
+        
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.config['access_token']}",
+                "Content-Type": "application/json",
+                "Cookie": self.config.get("cookie", ""),
+            }
+            
+            # 创建文章（知乎 API）
+            data = {
+                "title": article.title,
+                "content": article.content,
+                "excerpt": article.summary or article.content[:200],
+                "tags": article.tags[:5],
+                "commentable": True,
+                "can_comment": True,
+            }
+            
+            resp = requests.post(
+                f"{self.BASE_URL}/api/posts",
+                headers=headers, json=data, timeout=30
+            )
+            
+            if resp.status_code in (200, 201):
+                result = resp.json()
+                url = result.get("url", f"https://www.zhihu.com/question/...")
+                return PublishResult(
+                    platform="zhihu", success=True, url=url,
+                    message=f"Published: {url}"
+                )
+            else:
+                return PublishResult(
+                    platform="zhihu", success=False,
+                    error=f"Zhihu API error: {resp.status_code} - {resp.text[:200]}"
+                )
+        except Exception as e:
+            return PublishResult(
+                platform="zhihu", success=False, error=str(e)
+            )
